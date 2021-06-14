@@ -9,80 +9,85 @@ function generateToken(user) {
   });
 }
 
-exports.login = (req, res) => {
-  const { email, password } = req.body;
-
-  User.findOne({ email }, (err, user) => {
-    if (err) return next(err);
-
-    if (!user) return res.status(401).json({ message: 'User not found!' });
-
-    user.comparePassword(password, (err, isMatch) => {
-      if (err)
-        return res
-          .status(500)
-          .json({ message: 'Something went wrong, please try again' });
-
-      if (!isMatch)
-        return res
-          .status(401)
-          .json({ message: 'Email or password is not correct!' });
-
-      const userInfo = {
-        email: user.email,
-        firstname: user.firstname,
-        lastname: user.lastname,
-      };
-      return res.json({
-        message: 'Login success',
-        user: userInfo,
-        token: `JWT ${generateToken(userInfo)}`,
-      });
-    });
-  });
-};
-
 exports.register = (req, res, next) => {
-  const { email, password, firstname, lastname } = req.body;
+  const {
+    name,
+    email,
+    portfolio,
+    instagram,
+    twitter,
+    description,
+    avatar,
+    banner,
+    wallet,
+  } = req.body;
 
-  User.findOne({ email }, (err, existingUser) => {
-    if (err) return next(err);
+  User.findOne({ email }, (emailErr, existingEmailUser) => {
+    if (emailErr) return next(emailErr);
 
-    if (existingUser) {
+    if (existingEmailUser) {
       return res.status(422).send({ message: 'This email is already in use.' });
     }
 
-    const user = new User({ email, password, firstname, lastname });
+    User.findOne({ wallet }, (walletErr, existingWalletUser) => {
+      if (walletErr) return next(walletErr);
 
-    user.save((err) => {
-      if (err) return next(err);
+      if (existingWalletUser) {
+        return res.status(422).send({ message: 'This wallet address is already in use.' });
+      }
 
-      const userInfo = {
-        email,
-        firstname,
-        lastname,
-      };
-      res.json({
-        message: 'Register success!',
-        token: `JWT ${generateToken(userInfo)}`,
-        user: userInfo,
-      });
-    });
+      User.findOne({ name }, (nameErr, existingNameUser) => {
+        if (nameErr) return next(nameErr);
+
+        if (existingNameUser) {
+          return res.status(422).send({ message: 'This user name is already in use.' });
+        }
+
+        const user = new User({
+          name,
+          email,
+          portfolio,
+          instagram,
+          twitter,
+          description,
+          avatar,
+          banner,
+          wallet
+        });
+    
+        user.save((err) => {
+          if (err) return next(err);
+    
+          const userInfo = {
+            name,
+            email,
+            portfolio,
+            instagram,
+            twitter,
+            description,
+            avatar,
+            banner,
+            wallet,
+          };
+          res.json({
+            message: 'Register success!',
+            user: userInfo,
+          });
+        });
+      })
+    })
   });
 };
 
-exports.getProfile = (req, res) => {
-  User.findOne({ email: req.user.email })
+exports.getUser = (req, res) => {
+  User.findOne({ wallet: req.params.wallet })
     .then(user => {
-      const userInfo = {
-        email: user.email,
-        firstname: user.firstname,
-        lastname: user.lastname,
-      };
+      
+      console.log(user)
 
       res.json({
         success: true,
-        user: userInfo,
+        user
       });
     })
     .catch(() => {
