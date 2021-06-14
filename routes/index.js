@@ -1,6 +1,5 @@
 const express = require('express');
 const authRouter = require('./auth');
-const userRouter = require('./user');
 const { requireAuth } = require('../middlewares/auth');
 
 require('../config/passport');
@@ -12,6 +11,5 @@ router.get('/', (req, res) => {
 });
 
 router.use('/auth', authRouter);
-router.use('/user', requireAuth, userRouter);
 
 module.exports = router;
