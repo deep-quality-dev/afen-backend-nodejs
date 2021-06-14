@@ -1,6 +1,6 @@
 const express = require('express');
-const authRouter = require('./auth');
-const { requireAuth } = require('../middlewares/auth');
+const userRouter = require('./user');
+// const { requireAuth } = require('../middlewares/auth');
 
 require('../config/passport');
 
@@ -10,6 +10,6 @@ router.get('/', (req, res) => {
   res.json({ success: true, message: 'afen rest api' });
 });
 
-router.use('/auth', authRouter);
+router.use('/user', userRouter);
 
 module.exports = router;

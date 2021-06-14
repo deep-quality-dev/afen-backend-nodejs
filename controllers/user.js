@@ -79,20 +79,16 @@ exports.register = (req, res, next) => {
   });
 };
 
-exports.getUser = (req, res) => {
-  User.findOne({ wallet: req.params.wallet })
-    .then(user => {
-      
-      console.log(user)
-
-      res.json({
-        success: true,
-        user
-      });
-    })
-    .catch(() => {
-      res.status(404).send({ message: 'User not found' });
+exports.getUser = async (req, res) => {
+  try {
+    const user = await User.findOne({ wallet: req.params.wallet });
+    res.json({
+      success: true,
+      user
     });
+  } catch (e) {
+    res.status(404).send({ message: 'User not found' });
+  };
 };
 
 exports.logout = (req, res) => {
