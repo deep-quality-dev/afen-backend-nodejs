@@ -7,29 +7,6 @@ const NftSchema = new Schema(
       type: String,
       required: true,
     },
-    tag: {
-      type: String,
-      required: true,
-    },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    liked_by: {
-      type: Array,
-      default: [],
-    },
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Comment',
-      },
-    ],
-    posted_by: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
   },
   {
     timestamps: true,
