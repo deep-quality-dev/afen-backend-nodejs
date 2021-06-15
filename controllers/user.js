@@ -22,6 +22,10 @@ exports.register = (req, res, next) => {
     wallet,
   } = req.body;
 
+  if (!name || !email || !wallet) {
+    return res.status(422).sned({ message: 'The Name, E-mail and Wallet Address should be valid.' });
+  }
+
   User.findOne({ email }, (emailErr, existingEmailUser) => {
     if (emailErr) return next(emailErr);
 
@@ -46,13 +50,13 @@ exports.register = (req, res, next) => {
         const user = new User({
           name,
           email,
-          portfolio,
-          instagram,
-          twitter,
-          description,
-          avatar,
-          banner,
-          wallet
+          wallet,
+          portfolio: portfolio ?? '',
+          instagram: instagram ?? '',
+          twitter: twitter ?? '',
+          description: description ?? '',
+          avatar: avatar ?? '',
+          banner: banner ?? '',
         });
     
         user.save((err) => {
@@ -83,11 +87,11 @@ exports.getUser = async (req, res) => {
   try {
     const user = await User.findOne({ wallet: req.params.wallet });
     res.json({
-      success: true,
+      token: `JWT ${generateToken(user)}`,
       user
     });
   } catch (e) {
-    res.status(404).send({ message: 'User not found' });
+    res.status(422).send({ message: 'User not found' });
   };
 };
 
