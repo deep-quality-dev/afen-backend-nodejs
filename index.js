@@ -8,6 +8,7 @@ const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
 const { ValidationError } = require('express-validation');
+const expFileUpload = require('express-fileupload');
 
 const routes = require('./routes');
 const { port, mongoURI } = require('./config');
@@ -26,6 +27,8 @@ app.use(morgan('dev'));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(expFileUpload());
 
 app.use('/api/v1', routes);
 

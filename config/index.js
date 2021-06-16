@@ -16,7 +16,7 @@ module.exports = {
   port: PORT,
   mongoURI: NODE_ENV === 'production' ? MONGO_URI : MONGO_URI_DEV,
   secretOrKey: JWT_SECRET,
-  jwtExpireMinutes: JWT_EXPIRE_MINUTES,
+  jwtExpireMinutes: Number(JWT_EXPIRE_MINUTES),
   appName: APP_NAME,
   emailSender: {
     service: 'Gmail',

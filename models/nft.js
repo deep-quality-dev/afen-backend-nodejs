@@ -3,8 +3,19 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const NftSchema = new Schema(
   {
-    content: {
+    fileHash: {
       type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
       required: true,
     },
   },
@@ -13,4 +24,4 @@ const NftSchema = new Schema(
   },
 );
 
-module.exports = mongoose.model('Article', NftSchema);
+module.exports = mongoose.model('Nft', NftSchema);

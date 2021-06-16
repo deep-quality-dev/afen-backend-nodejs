@@ -7,10 +7,7 @@ const userController = require('../controllers/user');
 
 const router = express.Router();
 
-router.post(
-  '/register',
-  userController.register,
-);
+router.post('/register', userController.register);
 
 router.get('/:wallet', userController.getUser);
 

@@ -23,7 +23,9 @@ exports.register = (req, res, next) => {
   } = req.body;
 
   if (!name || !email || !wallet) {
-    return res.status(422).sned({ message: 'The Name, E-mail and Wallet Address should be valid.' });
+    return res.status(422).sned({
+      message: 'The Name, E-mail and Wallet Address should be valid.',
+    });
   }
 
   User.findOne({ email }, (emailErr, existingEmailUser) => {
@@ -37,14 +39,18 @@ exports.register = (req, res, next) => {
       if (walletErr) return next(walletErr);
 
       if (existingWalletUser) {
-        return res.status(422).send({ message: 'This wallet address is already in use.' });
+        return res
+          .status(422)
+          .send({ message: 'This wallet address is already in use.' });
       }
 
       User.findOne({ name }, (nameErr, existingNameUser) => {
         if (nameErr) return next(nameErr);
 
         if (existingNameUser) {
-          return res.status(422).send({ message: 'This user name is already in use.' });
+          return res
+            .status(422)
+            .send({ message: 'This user name is already in use.' });
         }
 
         const user = new User({
@@ -58,10 +64,10 @@ exports.register = (req, res, next) => {
           avatar: avatar ?? '',
           banner: banner ?? '',
         });
-    
-        user.save((err) => {
+
+        user.save(err => {
           if (err) return next(err);
-    
+
           const userInfo = {
             name,
             email,
@@ -78,21 +84,26 @@ exports.register = (req, res, next) => {
             user: userInfo,
           });
         });
-      })
-    })
+      });
+    });
   });
 };
 
-exports.getUser = async (req, res) => {
+exports.getUser = async (req, res, next) => {
+  const { wallet } = req.params;
+
   try {
-    const user = await User.findOne({ wallet: req.params.wallet });
+    const user = await User.findOne({ wallet }).exec();
+
+    if (!user) res.status(401).json({ message: 'User not found' });
+
     res.json({
-      token: `JWT ${generateToken(user)}`,
-      user
+      user,
+      // token: `JWT ${generateToken(user)}`,
     });
   } catch (e) {
-    res.status(422).send({ message: 'User not found' });
-  };
+    next(e);
+  }
 };
 
 exports.logout = (req, res) => {
