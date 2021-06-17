@@ -25,4 +25,5 @@ module.exports = {
       pass: MAIL_SENDER_PASS,
     },
   },
+  env: NODE_ENV,
 };

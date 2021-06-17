@@ -2,8 +2,12 @@ const fs = require('fs');
 const { create } = require('ipfs-http-client');
 
 const Nft = require('../models/nft');
+const config = require('../config');
 
-const ipfs = create({ host: 'localhost', port: 5001, protocal: 'http' });
+const ipfs =
+  config.env === 'production'
+    ? create()
+    : create({ host: 'localhost', port: 5001, protocal: 'http' });
 
 exports.create = (req, res) => {
   if (req.files.inputFile) {
