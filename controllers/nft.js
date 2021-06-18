@@ -4,9 +4,13 @@ const { create } = require('ipfs-http-client');
 const Nft = require('../models/nft');
 const config = require('../config');
 
-const ipfs = create({ ...config.ipfs });
+const ipfs = create({
+  host: '3.239.161.29',
+  port: 5001,
+  protocol: 'http',
+});
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   if (req.files.inputFile) {
     const file = req.files.inputFile;
     const fileName = file.name;
@@ -40,7 +44,7 @@ exports.create = (req, res) => {
       }
     });
   } else {
-    res.status(400).json({ message: 'File is not attached.' });
+    res.status(400).json({ message: 'No files were uploaded.' });
   }
 };
 

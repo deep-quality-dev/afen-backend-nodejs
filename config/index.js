@@ -10,9 +10,9 @@ const {
   APP_NAME,
   MAIL_SENDER,
   MAIL_SENDER_PASS,
-  IPFS_HOST,
-  IPFS_PORT,
-  IPFS_PROTOCAL,
+  INTERPLANETARY_FISSION_URL,
+  INTERPLANETARY_FISSION_USERNAME,
+  INTERPLANETARY_FISSION_PASSWORD,
 } = process.env;
 
 module.exports = {
@@ -29,8 +29,8 @@ module.exports = {
     },
   },
   ipfs: {
-    host: IPFS_HOST || 'localhost',
-    port: IPFS_PORT || 5001,
-    protocal: IPFS_PROTOCAL || 'http',
+    INTERPLANETARY_FISSION_USERNAME,
+    INTERPLANETARY_FISSION_URL,
+    INTERPLANETARY_FISSION_PASSWORD,
   },
 };
