@@ -10,6 +10,9 @@ const {
   APP_NAME,
   MAIL_SENDER,
   MAIL_SENDER_PASS,
+  IPFS_HOST,
+  IPFS_PORT,
+  IPFS_PROTOCAL,
 } = process.env;
 
 module.exports = {
@@ -25,5 +28,9 @@ module.exports = {
       pass: MAIL_SENDER_PASS,
     },
   },
-  env: NODE_ENV,
+  ipfs: {
+    host: IPFS_HOST || 'localhost',
+    port: IPFS_PORT || 5001,
+    protocal: IPFS_PROTOCAL || 'http',
+  },
 };
