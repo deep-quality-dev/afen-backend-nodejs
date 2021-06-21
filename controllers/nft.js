@@ -5,14 +5,14 @@ const Nft = require('../models/nft');
 const config = require('../config');
 
 const ipfs = create({
-  host: '3.239.161.29',
+  host: config.IPFS_HOST,
   port: 5001,
   protocol: 'http',
 });
 
-exports.create = async (req, res) => {
-  if (req.files.inputFile) {
-    const file = req.files.inputFile;
+exports.create = async (req, res, next) => {
+  if (req.files.file) {
+    const file = req.files.file;
     const fileName = file.name;
     const filePath = __dirname + fileName;
     file.mv(filePath, async err => {
@@ -32,7 +32,15 @@ exports.create = async (req, res) => {
         const nft = new Nft({
           fileHash,
           name: fileName,
+          title: req.body.title,
+          description: req.body.description,
+          isAction: req.body.isAction && true,
           userId: req.body.userId,
+          price: req.body.price,
+          minimumBid: req.body.price ?? 0,
+          properties: req.body.properties
+            ? JSON.parse(req.body.properties)
+            : null,
         });
         nft.save(err => {
           if (err) next(err);
