@@ -27,19 +27,14 @@ const NftSchema = new Schema(
       type: Number,
       default: 0,
     },
-    properties: {
-      height: {
-        type: Number,
-        required: true,
-      },
-      width: {
-        type: Number,
-        required: true,
-      },
-      depth: {
-        type: Number,
-        required: true,
-      },
+    height: {
+      type: Number,
+    },
+    width: {
+      type: Number,
+    },
+    depth: {
+      type: Number,
     },
     userId: {
       type: Schema.Types.ObjectId,

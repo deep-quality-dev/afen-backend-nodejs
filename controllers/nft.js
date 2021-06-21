@@ -34,18 +34,18 @@ exports.create = async (req, res, next) => {
           name: fileName,
           title: req.body.title,
           description: req.body.description,
-          isAction: req.body.isAction && true,
+          isAction: req.body.isAction,
           userId: req.body.userId,
           price: req.body.price,
-          minimumBid: req.body.price ?? 0,
-          properties: req.body.properties
-            ? JSON.parse(req.body.properties)
-            : null,
+          minimumBid: req.body.price,
+          width: req.body.width,
+          height: req.body.height,
+          depth: req.body.depth,
         });
         nft.save(err => {
           if (err) next(err);
 
-          res.json(nft);
+          res.json({ nft, message: 'NFT successfully created' });
         });
       } catch (e) {
         next(e);
