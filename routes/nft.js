@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.post('/create', nftController.create);
 
+router.post('/list', nftController.list);
+
 module.exports = router;

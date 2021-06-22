@@ -1,8 +1,9 @@
 const fs = require('fs');
 const { create } = require('ipfs-http-client');
 
-const Nft = require('../models/nft');
 const config = require('../config');
+const Nft = require('../models/nft');
+const Query = require('../utils/query');
 
 const ipfs = create({
   host: config.IPFS_HOST,
@@ -69,4 +70,34 @@ const addFile = async (fileName, filePath) => {
   );
   console.log('File is added to NFT', filesAdded);
   return filesAdded.cid.toString();
+};
+
+exports.list = (req, res, next) => {
+  const { pageNo, numPerPage, filter } = req.body;
+  let query = {};
+
+  if (filter.isAuction) {
+    query = {
+      ...query,
+      isAuction: Query.getQueryByField(Query.OPERATORS.EQ, filter.isAuction),
+    };
+  }
+
+  if (filter.price) {
+    query = {
+      ...query,
+      price: Query.getQueryByField(Query.OPERATORS.EQ, filter.price),
+    };
+  }
+
+  Nft.find(query, (err, nftList) => {
+    if (err) return next(err);
+
+    return res.json({
+      total: nftList.length,
+      numPerPage,
+      pageNo,
+      list: nftList.splice((pageNo - 1) * numPerPage, numPerPage),
+    });
+  });
 };
