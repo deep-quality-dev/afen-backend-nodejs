@@ -9,8 +9,10 @@ const router = express.Router();
 
 router.post('/register', userController.register);
 
+router.get('/logout', userController.logout);
+
 router.get('/:wallet', userController.getUser);
 
-router.get('/logout', userController.logout);
+router.post('/update', userController.update);
 
 module.exports = router;

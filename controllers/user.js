@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const config = require('../config');
 const User = require('../models/user');
+const Query = require('../utils/query');
 
 function generateToken(user) {
   return jwt.sign(user, config.secretOrKey, {
@@ -101,6 +102,25 @@ exports.getUser = async (req, res, next) => {
       user,
       // token: `JWT ${generateToken(user)}`,
     });
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.update = async (req, res, next) => {
+  try {
+    const user = req.body;
+
+    if (!user.id)
+      return res.status(400).send({ message: 'User Id is missed.' });
+
+    const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, user.id) };
+
+    await User.findOneAndUpdate(filter, user);
+
+    const newUser = await User.findOne(filter);
+
+    res.json(newUser);
   } catch (e) {
     next(e);
   }
