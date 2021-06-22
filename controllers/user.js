@@ -24,7 +24,7 @@ exports.register = (req, res, next) => {
   } = req.body;
 
   if (!name || !email || !wallet) {
-    return res.status(422).sned({
+    return res.status(422).send({
       message: 'The Name, E-mail and Wallet Address should be valid.',
     });
   }
