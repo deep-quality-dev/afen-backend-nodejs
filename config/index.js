@@ -11,6 +11,9 @@ const {
   MAIL_SENDER,
   MAIL_SENDER_PASS,
   IPFS_HOST,
+  AWS_ACCESS_KEY,
+  AWS_SECRET_ACCESS_KEY,
+  S3_BUCKET_NAME,
 } = process.env;
 
 module.exports = {
@@ -27,4 +30,7 @@ module.exports = {
     },
   },
   IPFS_HOST,
+  AWS_ACCESS_KEY,
+  AWS_SECRET_ACCESS_KEY,
+  S3_BUCKET_NAME,
 };

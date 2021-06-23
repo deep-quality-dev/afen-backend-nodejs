@@ -2,6 +2,7 @@ const express = require('express');
 const { requireAuth } = require('../middlewares/auth');
 const userRouter = require('./user');
 const nftRouter = require('./nft');
+const fileRouter = require('./file');
 
 require('../config/passport');
 
@@ -13,5 +14,6 @@ router.get('/', (req, res) => {
 
 router.use('/user', userRouter);
 router.use('/nft', nftRouter);
+router.use('/file', fileRouter);
 
 module.exports = router;
