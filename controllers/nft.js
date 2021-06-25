@@ -36,7 +36,7 @@ exports.create = async (req, res, next) => {
           title: req.body.title,
           description: req.body.description,
           isAction: req.body.isAction,
-          userId: req.body.userId,
+          wallet: req.body.wallet,
           price: req.body.price,
           minimumBid: req.body.price,
           width: req.body.width,
