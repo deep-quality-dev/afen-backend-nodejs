@@ -84,10 +84,24 @@ exports.list = (req, res, next) => {
     };
   }
 
-  if (filter.price) {
+  if (filter.afenPrice) {
     query = {
       ...query,
-      price: Query.getQueryByField(Query.OPERATORS.EQ, filter.price),
+      price: Query.getQueryByField(Query.OPERATORS.EQ, filter.afenPrice),
+    };
+  }
+
+  if (filter.nftPrice) {
+    query = {
+      ...query,
+      price: Query.getQueryByField(Query.OPERATORS.EQ, filter.nftPrice),
+    };
+  }
+
+  if (filter.wallet) {
+    query = {
+      ...query,
+      price: Query.getQueryByField(Query.OPERATORS.EQ, filter.wallet),
     };
   }
 
