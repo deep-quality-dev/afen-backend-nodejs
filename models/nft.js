@@ -19,7 +19,11 @@ const NftSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    price: {
+    afenPrice: {
+      type: Number,
+      required: true,
+    },
+    nftPrice: {
       type: Number,
       required: true,
     },
