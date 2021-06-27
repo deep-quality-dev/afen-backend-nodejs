@@ -7,8 +7,16 @@ const NftSchema = new Schema(
       type: String,
       required: true,
     },
+    path: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
+      required: true,
+    },
+    royalty: {
+      type: Number,
       required: true,
     },
     description: {
@@ -21,11 +29,9 @@ const NftSchema = new Schema(
     },
     afenPrice: {
       type: Number,
-      required: true,
     },
-    nftPrice: {
+    bnbPrice: {
       type: Number,
-      required: true,
     },
     minimunBid: {
       type: Number,

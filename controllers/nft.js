@@ -3,6 +3,7 @@ const { create } = require('ipfs-http-client');
 
 const config = require('../config');
 const Nft = require('../models/nft');
+const { fileUpload } = require('../utils/file');
 const Query = require('../utils/query');
 
 const ipfs = create({
@@ -12,50 +13,61 @@ const ipfs = create({
 });
 
 exports.create = async (req, res, next) => {
-  if (req.files.file) {
-    const file = req.files.file;
-    const fileName = file.name;
-    const filePath = __dirname + fileName;
-    file.mv(filePath, async err => {
-      try {
-        if (err) {
-          console.log('Error: failed to download file');
-          return res.status(500).send(err);
-        }
+  try {
+    if (req.files.file) {
+      const file = req.files.file;
+      const fileName = file.name;
+      const filePath = __dirname + fileName;
 
-        const fileHash = await addFile(fileName, filePath);
-        console.log('File Hash received __>', fileHash);
-        fs.unlink(filePath, err => {
-          if (err) {
-            console.log('Error: Unable to delete file.', err);
+      const uploadedData = await fileUpload(file);
+
+      if (uploadedData.status === 'success') {
+        file.mv(filePath, async err => {
+          try {
+            if (err) {
+              console.log('Error: failed to download file');
+              return res.status(500).send(err);
+            }
+
+            const fileHash = await addFile(fileName, filePath);
+            console.log('File Hash received __>', fileHash);
+            fs.unlink(filePath, err => {
+              if (err) {
+                console.log('Error: Unable to delete file.', err);
+              }
+            });
+            const nft = new Nft({
+              fileHash,
+              path: uploadedData.path,
+              name: fileName,
+              title: req.body.title,
+              description: req.body.description,
+              royalty: req.body.royalty,
+              isAction: req.body.isAction,
+              wallet: req.body.wallet,
+              afenPrice: req.body.afenPrice,
+              bnbPrice: req.body.nftPrice,
+              minimumBid: req.body.price,
+              width: req.body.width,
+              height: req.body.height,
+              depth: req.body.depth,
+            });
+            nft.save(err => {
+              if (err) next(err);
+
+              res.json({ nft, message: 'NFT successfully created' });
+            });
+          } catch (e) {
+            next(e);
           }
         });
-        const nft = new Nft({
-          fileHash,
-          name: fileName,
-          title: req.body.title,
-          description: req.body.description,
-          isAction: req.body.isAction,
-          wallet: req.body.wallet,
-          afenPrice: req.body.afenPrice,
-          nftPrice: req.body.nftPrice,
-          minimumBid: req.body.price,
-          width: req.body.width,
-          height: req.body.height,
-          depth: req.body.depth,
-        });
-        nft.save(err => {
-          if (err) next(err);
-
-          res.json({ nft, message: 'NFT successfully created' });
-        });
-      } catch (e) {
-        next(e);
+      } else {
+        res.status(500).json(uploadedData.error);
       }
-    });
-  } else {
-    res.status(400).json({ message: 'No files were uploaded.' });
-  }
+    } else {
+      res.status(400).json({ message: 'No files were uploaded.' });
+    }
+  } catch (e) {}
 };
 
 const addFile = async (fileName, filePath) => {
