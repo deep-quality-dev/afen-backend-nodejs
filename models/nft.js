@@ -5,7 +5,6 @@ const NftSchema = new Schema(
   {
     nftId: {
       type: String,
-      required: true,
     },
     fileHash: {
       type: String,
