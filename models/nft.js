@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const NftSchema = new Schema(
   {
+    nftId: {
+      type: String,
+      required: true,
+    },
     fileHash: {
       type: String,
       required: true,
