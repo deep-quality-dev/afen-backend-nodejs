@@ -111,10 +111,10 @@ exports.update = async (req, res, next) => {
   try {
     const user = req.body;
 
-    if (!user.id)
+    if (!user._id)
       return res.status(400).send({ message: 'User Id is missed.' });
 
-    const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, user.id) };
+    const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, user._id) };
 
     await User.findOneAndUpdate(filter, user);
 

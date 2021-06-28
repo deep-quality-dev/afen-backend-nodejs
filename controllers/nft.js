@@ -81,9 +81,9 @@ exports.update = async (req, res, next) => {
   try {
     const nft = req.body;
 
-    if (!nft.id) return res.status(400).send({ message: 'Nft Id is missed.' });
+    if (!nft._id) return res.status(400).send({ message: 'Nft Id is missed.' });
 
-    const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, nft.id) };
+    const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, nft._id) };
 
     await Nft.findOneAndUpdate(filter, nft);
 
