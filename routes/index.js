@@ -14,6 +14,6 @@ router.get('/', (req, res) => {
 
 router.use('/user', userRouter);
 router.use('/nft', nftRouter);
-router.use('/file', fileRouter);
+router.use('/file', requireAuth, fileRouter);
 
 module.exports = router;

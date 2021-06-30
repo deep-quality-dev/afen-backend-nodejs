@@ -1,11 +1,15 @@
-const jwt = require('jsonwebtoken');
+const redis = require('redis');
+const JWTR = require('jwt-redis').default;
 
 const config = require('../config');
 const User = require('../models/user');
 const Query = require('../utils/query');
 
+const redisClient = redis.createClient();
+const jwtr = new JWTR(redisClient);
+
 function generateToken(user) {
-  return jwt.sign(user, config.secretOrKey, {
+  return jwtr.sign(user, config.secretOrKey, {
     expiresIn: 60 * config.jwtExpireMinutes,
   });
 }
@@ -14,6 +18,7 @@ exports.register = (req, res, next) => {
   const {
     name,
     email,
+    password,
     portfolio,
     instagram,
     twitter,
@@ -64,6 +69,7 @@ exports.register = (req, res, next) => {
           description: description ?? '',
           avatar: avatar ?? '',
           banner: banner ?? '',
+          password,
         });
 
         user.save(err => {
@@ -90,6 +96,46 @@ exports.register = (req, res, next) => {
   });
 };
 
+exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email }, (err, user) => {
+    if (err) return next(err);
+
+    if (!user) return res.status(401).json({ message: 'User not found!' });
+
+    user.comparePassword(password, (err, isMatch) => {
+      if (err)
+        return res
+          .status(500)
+          .json({ message: 'Something went wrong, please try again' });
+
+      if (!isMatch)
+        return res
+          .status(401)
+          .json({ message: 'Email or password is not correct!' });
+
+      generateToken({
+        email,
+        wallet: user.wallet,
+        name: user.wallet,
+      })
+        .then(token => {
+          return res.json({
+            message: 'Login success',
+            user,
+            token,
+          });
+        })
+        .catch(() => {
+          return res
+            .status(500)
+            .json({ message: 'Something went wrong, please try again' });
+        });
+    });
+  });
+};
+
 exports.getUser = async (req, res, next) => {
   const { wallet } = req.params;
 
@@ -98,10 +144,7 @@ exports.getUser = async (req, res, next) => {
 
     if (!user) res.status(401).json({ message: 'User not found' });
 
-    res.json({
-      user,
-      // token: `JWT ${generateToken(user)}`,
-    });
+    res.json({ user });
   } catch (e) {
     next(e);
   }
@@ -127,6 +170,10 @@ exports.update = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  req.logout();
-  res.json({ message: 'Success' });
+  if (req.headers.authorization) {
+    jwtr.destroy(req.headers.authorization.replace('JWT ', '')).finally(() => {
+      req.logout();
+      res.json({ message: 'Success' });
+    });
+  }
 };

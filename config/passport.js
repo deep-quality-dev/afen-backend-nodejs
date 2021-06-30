@@ -12,9 +12,13 @@ const jwtOptions = {
 
 const jwtLogin = new JwtStrategy(jwtOptions, (payload, next) => {
   User.findOne({ email: payload.email }, (err, user) => {
-    if (err) return next(err, false);
+    if (err) {
+      return next(err, false);
+    }
 
-    if (user) return next(null, user);
+    if (user) {
+      return next(null, user);
+    }
 
     return next(null, false);
   });
