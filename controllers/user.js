@@ -5,7 +5,7 @@ const config = require('../config');
 const User = require('../models/user');
 const Query = require('../utils/query');
 
-const redisClient = redis.createClient();
+const redisClient = redis.createClient(config.redis_url);
 const jwtr = new JWTR(redisClient);
 
 function generateToken(user) {

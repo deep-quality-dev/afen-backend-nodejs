@@ -14,6 +14,7 @@ const {
   AWS_ACCESS_KEY,
   AWS_SECRET_ACCESS_KEY,
   S3_BUCKET_NAME,
+  REDIS_URL,
 } = process.env;
 
 module.exports = {
@@ -33,4 +34,5 @@ module.exports = {
   AWS_ACCESS_KEY,
   AWS_SECRET_ACCESS_KEY,
   S3_BUCKET_NAME,
+  redis_url: REDIS_URL,
 };
