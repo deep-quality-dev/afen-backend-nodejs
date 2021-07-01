@@ -35,4 +35,5 @@ module.exports = {
   AWS_SECRET_ACCESS_KEY,
   S3_BUCKET_NAME,
   redis_url: REDIS_URL,
+  env: NODE_ENV,
 };

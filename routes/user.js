@@ -25,4 +25,6 @@ router.get('/:wallet', requireAuth, userController.getUser);
 
 router.post('/update', requireAuth, userController.update);
 
+router.delete('/:wallet', requireAuth, userController.delete);
+
 module.exports = router;

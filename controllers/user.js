@@ -5,7 +5,10 @@ const config = require('../config');
 const User = require('../models/user');
 const Query = require('../utils/query');
 
-const redisClient = redis.createClient(config.redis_url);
+const redisClient =
+  config.env === 'production'
+    ? redis.createClient(config.redis_url)
+    : redis.createClient();
 const jwtr = new JWTR(redisClient);
 
 function generateToken(user) {
@@ -164,6 +167,22 @@ exports.update = async (req, res, next) => {
     const newUser = await User.findOne(filter);
 
     res.json(newUser);
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.delete = async (req, res, next) => {
+  try {
+    const { wallet } = req.params;
+
+    const user = await User.findOne({ wallet }).exec();
+
+    if (!user) return res.status(401).json({ message: 'User not found' });
+
+    await User.deleteOne({ wallet }).exec();
+
+    res.json({ user });
   } catch (e) {
     next(e);
   }
