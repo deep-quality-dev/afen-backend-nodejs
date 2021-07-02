@@ -58,6 +58,7 @@ exports.create = async (req, res, next) => {
               width: req.body.width,
               height: req.body.height,
               depth: req.body.depth,
+              isVerified: req.body.isVerified,
             });
             nft.save(err => {
               if (err) next(err);
