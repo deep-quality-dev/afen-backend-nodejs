@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { create } = require('ipfs-http-client');
+const _ = require('lodash');
 
 const config = require('../config');
 const Nft = require('../models/nft');
@@ -125,46 +126,54 @@ const addFile = async (fileName, filePath) => {
   return filesAdded.cid.toString();
 };
 
-exports.list = (req, res, next) => {
-  const { pageNo, numPerPage, filter } = req.body;
-  let query = {};
+exports.list = async (req, res, next) => {
+  try {
+    const { pageNo, numPerPage, filter, sort } = req.body;
+    let query = {};
 
-  if (filter.isAuction) {
-    query = {
-      ...query,
-      isAuction: Query.getQueryByField(Query.OPERATORS.EQ, filter.isAuction),
-    };
-  }
+    if (filter.isAuction) {
+      query = {
+        ...query,
+        isAuction: Query.getQueryByField(Query.OPERATORS.EQ, filter.isAuction),
+      };
+    }
 
-  if (filter.afenPrice) {
-    query = {
-      ...query,
-      afenPrice: Query.getQueryByField(Query.OPERATORS.EQ, filter.afenPrice),
-    };
-  }
+    if (filter.afenPrice) {
+      query = {
+        ...query,
+        afenPrice: Query.getQueryByField(Query.OPERATORS.EQ, filter.afenPrice),
+      };
+    }
 
-  if (filter.bnbPrice) {
-    query = {
-      ...query,
-      bnbPrice: Query.getQueryByField(Query.OPERATORS.EQ, filter.bnbPrice),
-    };
-  }
+    if (filter.bnbPrice) {
+      query = {
+        ...query,
+        bnbPrice: Query.getQueryByField(Query.OPERATORS.EQ, filter.bnbPrice),
+      };
+    }
 
-  if (filter.wallet) {
-    query = {
-      ...query,
-      wallet: Query.getQueryByField(Query.OPERATORS.EQ, filter.wallet),
-    };
-  }
+    if (filter.wallet) {
+      query = {
+        ...query,
+        wallet: Query.getQueryByField(Query.OPERATORS.EQ, filter.wallet),
+      };
+    }
 
-  Nft.find(query, (err, nftList) => {
-    if (err) return next(err);
+    const nftList = await Nft.find(query)
+      .sort(_.isEmpty(sort) ? { createAt: -1 } : sort)
+      .limit(numPerPage)
+      .skip((pageNo - 1) * numPerPage)
+      .exec();
+
+    const total = await Nft.count(query);
 
     return res.json({
-      total: nftList.length,
+      total,
       numPerPage,
       pageNo,
-      list: nftList.splice((pageNo - 1) * numPerPage, numPerPage),
+      list: nftList,
     });
-  });
+  } catch (e) {
+    next(e);
+  }
 };
