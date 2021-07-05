@@ -105,7 +105,10 @@ exports.login = (req, res, next) => {
   User.findOne({ email }, (err, user) => {
     if (err) return next(err);
 
-    if (!user) return res.status(401).json({ message: 'User not found!' });
+    if (!user)
+      return res
+        .status(401)
+        .json({ message: 'Email or password is not correct!' });
 
     user.comparePassword(password, (err, isMatch) => {
       if (err)
