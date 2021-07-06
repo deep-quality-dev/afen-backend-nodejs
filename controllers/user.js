@@ -169,7 +169,7 @@ exports.update = async (req, res, next) => {
 
     const newUser = await User.findOne(filter);
 
-    res.json(newUser);
+    res.json({ message: 'User updated successfully!', user: newUser });
   } catch (e) {
     next(e);
   }

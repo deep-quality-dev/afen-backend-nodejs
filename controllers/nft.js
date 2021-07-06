@@ -91,7 +91,7 @@ exports.update = async (req, res, next) => {
 
     const newNft = await Nft.findOne(filter);
 
-    res.json(newNft);
+    res.json({ message: 'Nft updated successfully', nft: newNft });
   } catch (e) {
     next(e);
   }
