@@ -107,7 +107,7 @@ exports.login = (req, res, next) => {
 
     if (!user)
       return res
-        .status(401)
+        .status(422)
         .json({ message: 'Email or password is not correct!' });
 
     user.comparePassword(password, (err, isMatch) => {
@@ -118,7 +118,7 @@ exports.login = (req, res, next) => {
 
       if (!isMatch)
         return res
-          .status(401)
+          .status(422)
           .json({ message: 'Email or password is not correct!' });
 
       generateToken({
