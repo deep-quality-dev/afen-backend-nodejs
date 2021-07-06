@@ -108,7 +108,9 @@ exports.get = async (req, res, next) => {
 
     const user = await User.findOne({ wallet: nft.wallet }).exec();
 
-    res.status.res.json({ nft: { ...nft, user } });
+    nft.user = user;
+
+    res.json({ nft: { ...nft._doc, user } });
   } catch (e) {
     next(e);
   }
