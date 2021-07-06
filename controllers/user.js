@@ -148,7 +148,7 @@ exports.getUser = async (req, res, next) => {
   try {
     const user = await User.findOne({ wallet }).exec();
 
-    if (!user) res.status(401).json({ message: 'User not found' });
+    if (!user) res.status(422).json({ message: 'User not found' });
 
     res.json({ user });
   } catch (e) {
@@ -181,7 +181,7 @@ exports.delete = async (req, res, next) => {
 
     const user = await User.findOne({ wallet }).exec();
 
-    if (!user) return res.status(401).json({ message: 'User not found' });
+    if (!user) return res.status(422).json({ message: 'User not found' });
 
     await User.deleteOne({ wallet }).exec();
 

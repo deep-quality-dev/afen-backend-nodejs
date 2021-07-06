@@ -4,6 +4,7 @@ const _ = require('lodash');
 
 const config = require('../config');
 const Nft = require('../models/nft');
+const User = require('../models/user');
 const { fileUpload } = require('../utils/file');
 const Query = require('../utils/query');
 
@@ -103,9 +104,11 @@ exports.get = async (req, res, next) => {
 
     const nft = await Nft.findOne({ _id: id }).exec();
 
-    if (!nft) res.status(401).json({ message: 'Nft not found' });
+    if (!nft) res.status(422).json({ message: 'Nft not found' });
 
-    res.json({ nft });
+    const user = await User.findOne({ wallet: nft.wallet }).exec();
+
+    res.status.res.json({ nft: { ...nft, user } });
   } catch (e) {
     next(e);
   }
