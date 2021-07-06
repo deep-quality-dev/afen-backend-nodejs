@@ -101,7 +101,7 @@ exports.get = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const nft = await Nft.findOne({ nftId: id }).exec();
+    const nft = await Nft.findOne({ _id: id }).exec();
 
     if (!nft) res.status(401).json({ message: 'Nft not found' });
 
