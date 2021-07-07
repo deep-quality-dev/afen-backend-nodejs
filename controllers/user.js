@@ -163,13 +163,11 @@ exports.update = async (req, res, next) => {
       return res.status(400).send({ message: 'User Id is missed.' });
 
     if (user.name) {
-      const existingUser = await User.findOne({ name: user });
+      const existingUser = await User.findOne({ name: user.name });
       if (user._id !== existingUser._id) {
-        res
-          .status(400)
-          .send({
-            message: 'This username is already in use. Please try another one.',
-          });
+        res.status(400).send({
+          message: 'This username is already in use. Please try another one.',
+        });
       }
     }
 
