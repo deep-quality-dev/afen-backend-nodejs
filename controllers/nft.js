@@ -20,7 +20,7 @@ exports.create = async (req, res, next) => {
       if (!req.body.afenPrice && !req.body.bnbPrice)
         return res.status(422).send({
           message:
-            'Afen Price and BNB price are empty. Please fill in either one.',
+            'Both Afen Price and BNB price are empty. Please fill in either one.',
         });
 
       const file = req.files.file;
@@ -53,7 +53,7 @@ exports.create = async (req, res, next) => {
               description: req.body.description,
               royalty: req.body.royalty,
               isAction: req.body.isAction,
-              wallet: req.body.wallet,
+              user: req.body.userId,
               afenPrice: req.body.afenPrice ?? 0,
               bnbPrice: req.body.bnbPrice ?? 0,
               minimumBid: req.body.price,
@@ -62,10 +62,16 @@ exports.create = async (req, res, next) => {
               depth: req.body.depth,
               isVerified: req.body.isVerified,
             });
-            nft.save(err => {
+            nft.save(async err => {
               if (err) next(err);
 
-              res.json({ nft, message: 'NFT successfully created' });
+              const newNft = await Nft.findOne({ _id: nft._id }).populate({
+                path: 'user',
+                model: 'User',
+                select:
+                  '_id name email portfolio instagram twitter discription avatar banner wallet',
+              });
+              res.json({ nft: newNft, message: 'NFT successfully created' });
             });
           } catch (e) {
             next(e);
@@ -90,7 +96,12 @@ exports.update = async (req, res, next) => {
 
     await Nft.findOneAndUpdate(filter, nft);
 
-    const newNft = await Nft.findOne(filter);
+    const newNft = await Nft.findOne(filter).populate({
+      path: 'user',
+      model: 'User',
+      select:
+        '_id name email portfolio instagram twitter discription avatar banner wallet',
+    });
 
     res.json({ message: 'Nft updated successfully', nft: newNft });
   } catch (e) {
@@ -102,15 +113,16 @@ exports.get = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const nft = await Nft.findOne({ _id: id }).exec();
+    const nft = await Nft.findOne({ _id: id }).populate({
+      path: 'user',
+      model: 'User',
+      select:
+        '_id name email portfolio instagram twitter discription avatar banner wallet',
+    });
 
     if (!nft) res.status(422).json({ message: 'Nft not found' });
 
-    const user = await User.findOne({ wallet: nft.wallet }).exec();
-
-    nft.user = user;
-
-    res.json({ nft: { ...nft._doc, user } });
+    res.json({ nft });
   } catch (e) {
     next(e);
   }
@@ -165,6 +177,12 @@ exports.list = async (req, res, next) => {
     }
 
     const nftList = await Nft.find(query)
+      .populate({
+        path: 'user',
+        model: 'User',
+        select:
+          '_id name email portfolio instagram twitter discription avatar banner wallet',
+      })
       .sort(_.isEmpty(sort) ? { createAt: -1 } : sort)
       .limit(numPerPage)
       .skip((pageNo - 1) * numPerPage)

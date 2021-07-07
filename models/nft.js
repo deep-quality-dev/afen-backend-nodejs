@@ -49,8 +49,9 @@ const NftSchema = new Schema(
     depth: {
       type: Number,
     },
-    wallet: {
-      type: String,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
     isVerified: {
