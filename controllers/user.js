@@ -162,6 +162,17 @@ exports.update = async (req, res, next) => {
     if (!user._id)
       return res.status(400).send({ message: 'User Id is missed.' });
 
+    if (user.name) {
+      const existingUser = await User.findOne({ name: user });
+      if (user._id !== existingUser._id) {
+        res
+          .status(400)
+          .send({
+            message: 'This username is already in use. Please try another one.',
+          });
+      }
+    }
+
     const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, user._id) };
 
     await User.findOneAndUpdate(filter, user);
