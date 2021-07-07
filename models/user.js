@@ -7,7 +7,7 @@ const UserSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      unique: true,
       required: true,
     },
     email: {
@@ -20,8 +20,8 @@ const UserSchema = new Schema(
     },
     wallet: {
       type: String,
-      required: true,
       unique: true,
+      required: true,
     },
     portfolio: {
       type: String,

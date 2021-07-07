@@ -124,7 +124,6 @@ exports.login = (req, res, next) => {
       generateToken({
         email,
         wallet: user.wallet,
-        name: user.wallet,
       })
         .then(token => {
           return res.json({
