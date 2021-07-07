@@ -143,10 +143,10 @@ exports.login = (req, res, next) => {
 };
 
 exports.getUser = async (req, res, next) => {
-  const { wallet } = req.params;
+  const { id } = req.params;
 
   try {
-    const user = await User.findOne({ wallet }).exec();
+    const user = await User.findOne({ _id: id }).exec();
 
     if (!user) res.status(422).json({ message: 'User not found' });
 

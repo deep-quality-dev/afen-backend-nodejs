@@ -21,7 +21,7 @@ router.post(
 
 router.get('/logout', requireAuth, userController.logout);
 
-router.get('/:wallet', requireAuth, userController.getUser);
+router.get('/:id', userController.getUser);
 
 router.post('/update', requireAuth, userController.update);
 
