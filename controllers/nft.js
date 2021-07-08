@@ -38,6 +38,18 @@ exports.create = async (req, res, next) => {
             }
 
             const fileHash = await addFile(fileName, filePath);
+
+            const existingNft = await Nft.findOne({ fileHash });
+
+            if (existingNft) {
+              res
+                .status(422)
+                .send({
+                  message:
+                    'This image is already in use. Please try another one.',
+                });
+            }
+
             console.log('File Hash received __>', fileHash);
             fs.unlink(filePath, err => {
               if (err) {
