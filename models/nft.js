@@ -60,6 +60,7 @@ const NftSchema = new Schema(
     },
     status: {
       type: String,
+      default: 'Uploaded',
     },
     canSell: {
       type: Boolean,
