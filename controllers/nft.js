@@ -61,6 +61,9 @@ exports.create = async (req, res, next) => {
               height: req.body.height,
               depth: req.body.depth,
               isVerified: req.body.isVerified,
+              status: req.body.status,
+              canSell: req.body.canSell,
+              thumbnail: req.body.thumbnail,
             });
             nft.save(async err => {
               if (err) next(err);

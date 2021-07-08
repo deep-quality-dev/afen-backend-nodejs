@@ -56,6 +56,17 @@ const NftSchema = new Schema(
     },
     isVerified: {
       type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+    },
+    canSell: {
+      type: Boolean,
+      default: false,
+    },
+    thumbnail: {
+      type: String,
     },
   },
   {
