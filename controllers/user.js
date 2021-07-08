@@ -126,6 +126,9 @@ exports.login = (req, res, next) => {
         wallet: user.wallet,
       })
         .then(token => {
+          user = user.toObject();
+          delete user.password;
+
           return res.json({
             message: 'Login success',
             user,
@@ -145,9 +148,12 @@ exports.getUser = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findOne({ _id: id }).exec();
+    let user = await User.findOne({ _id: id }).exec();
 
     if (!user) res.status(422).json({ message: 'User not found' });
+
+    user = user.toObject();
+    delete user.password;
 
     res.json({ user });
   } catch (e) {
@@ -175,7 +181,10 @@ exports.update = async (req, res, next) => {
 
     await User.findOneAndUpdate(filter, user);
 
-    const newUser = await User.findOne(filter);
+    let newUser = await User.findOne(filter);
+
+    newUser = newUser.toObject();
+    delete newUser.password;
 
     res.json({ message: 'User updated successfully!', user: newUser });
   } catch (e) {
