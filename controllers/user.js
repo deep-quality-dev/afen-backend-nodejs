@@ -177,6 +177,10 @@ exports.update = async (req, res, next) => {
       }
     }
 
+    delete user.email;
+    delete user.password;
+    delete user.wallet;
+
     const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, user._id) };
 
     await User.findOneAndUpdate(filter, user);

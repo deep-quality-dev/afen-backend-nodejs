@@ -116,6 +116,7 @@ exports.update = async (req, res, next) => {
     const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, nft._id) };
 
     delete nft.creator;
+    delete nft.file;
 
     await Nft.findOneAndUpdate(filter, nft);
 
