@@ -49,7 +49,12 @@ const NftSchema = new Schema(
     depth: {
       type: Number,
     },
-    user: {
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    owner: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,

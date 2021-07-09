@@ -42,12 +42,10 @@ exports.create = async (req, res, next) => {
             const existingNft = await Nft.findOne({ fileHash });
 
             if (existingNft) {
-              res
-                .status(422)
-                .send({
-                  message:
-                    'This image is already in use. Please try another one.',
-                });
+              res.status(422).send({
+                message:
+                  'This image is already in use. Please try another one.',
+              });
             }
 
             console.log('File Hash received __>', fileHash);
@@ -65,7 +63,8 @@ exports.create = async (req, res, next) => {
               description: req.body.description,
               royalty: req.body.royalty,
               isAction: req.body.isAction,
-              user: req.body.userId,
+              creator: req.body.creatorId,
+              owner: req.body.creatorId,
               afenPrice: req.body.afenPrice ?? 0,
               bnbPrice: req.body.bnbPrice ?? 0,
               minimumBid: req.body.price,
@@ -80,12 +79,19 @@ exports.create = async (req, res, next) => {
             nft.save(async err => {
               if (err) next(err);
 
-              const newNft = await Nft.findOne({ _id: nft._id }).populate({
-                path: 'user',
-                model: 'User',
-                select:
-                  '_id name email portfolio instagram twitter discription avatar banner wallet',
-              });
+              const newNft = await Nft.findOne({ _id: nft._id })
+                .populate({
+                  path: 'creator',
+                  model: 'User',
+                  select:
+                    '_id name email portfolio instagram twitter discription avatar banner wallet',
+                })
+                .populate({
+                  path: 'owner',
+                  model: 'User',
+                  select:
+                    '_id name email portfolio instagram twitter discription avatar banner wallet',
+                });
               res.json({ nft: newNft, message: 'NFT successfully created' });
             });
           } catch (e) {
@@ -109,14 +115,23 @@ exports.update = async (req, res, next) => {
 
     const filter = { _id: Query.getQueryByField(Query.OPERATORS.EQ, nft._id) };
 
+    delete nft.creator;
+
     await Nft.findOneAndUpdate(filter, nft);
 
-    const newNft = await Nft.findOne(filter).populate({
-      path: 'user',
-      model: 'User',
-      select:
-        '_id name email portfolio instagram twitter discription avatar banner wallet',
-    });
+    const newNft = await Nft.findOne(filter)
+      .populate({
+        path: 'creator',
+        model: 'User',
+        select:
+          '_id name email portfolio instagram twitter discription avatar banner wallet',
+      })
+      .populate({
+        path: 'owner',
+        model: 'User',
+        select:
+          '_id name email portfolio instagram twitter discription avatar banner wallet',
+      });
 
     res.json({ message: 'Nft updated successfully', nft: newNft });
   } catch (e) {
@@ -128,12 +143,19 @@ exports.get = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const nft = await Nft.findOne({ _id: id }).populate({
-      path: 'user',
-      model: 'User',
-      select:
-        '_id name email portfolio instagram twitter discription avatar banner wallet',
-    });
+    const nft = await Nft.findOne({ _id: id })
+      .populate({
+        path: 'creator',
+        model: 'User',
+        select:
+          '_id name email portfolio instagram twitter discription avatar banner wallet',
+      })
+      .populate({
+        path: 'owner',
+        model: 'User',
+        select:
+          '_id name email portfolio instagram twitter discription avatar banner wallet',
+      });
 
     if (!nft) res.status(422).json({ message: 'Nft not found' });
 
@@ -193,7 +215,13 @@ exports.list = async (req, res, next) => {
 
     const nftList = await Nft.find(query)
       .populate({
-        path: 'user',
+        path: 'creator',
+        model: 'User',
+        select:
+          '_id name email portfolio instagram twitter discription avatar banner wallet',
+      })
+      .populate({
+        path: 'owner',
         model: 'User',
         select:
           '_id name email portfolio instagram twitter discription avatar banner wallet',
