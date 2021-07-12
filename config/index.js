@@ -10,6 +10,11 @@ const {
   APP_NAME,
   MAIL_SENDER,
   MAIL_SENDER_PASS,
+  IPFS_HOST,
+  AWS_ACCESS_KEY,
+  AWS_SECRET_ACCESS_KEY,
+  S3_BUCKET_NAME,
+  REDIS_URL,
 } = process.env;
 
 module.exports = {
@@ -25,5 +30,10 @@ module.exports = {
       pass: MAIL_SENDER_PASS,
     },
   },
+  IPFS_HOST,
+  AWS_ACCESS_KEY,
+  AWS_SECRET_ACCESS_KEY,
+  S3_BUCKET_NAME,
+  redis_url: REDIS_URL,
   env: NODE_ENV,
 };
